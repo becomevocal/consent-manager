@@ -18,15 +18,43 @@ async function fetchDestinationForWriteKey(writeKey: string): Promise<Destinatio
     destination.id = destination.creationName
     delete destination.creationName
   }
-
   return destinations
+}
+
+async function fetchDestinationForBigCommerce(): Promise<Destination[]> {
+  const res = await fetch(
+    `https://us-central1-crystal-cavern-197304.cloudfunctions.net/script-manager-js-api`
+  )
+
+  if (!res.ok) {
+    throw new Error(
+      `Failed to fetch BigCommerce script manager entries: HTTP ${res.status} ${res.statusText}`
+    )
+  }
+
+  const destinations = await res.json()
+
+  return destinations.data.map(scriptManagerEntry =>
+    Object.assign({
+      id: scriptManagerEntry.uuid,
+      name: scriptManagerEntry.name,
+      category: scriptManagerEntry.category,
+      website: scriptManagerEntry.creator_website,
+      description: scriptManagerEntry.description
+    })
+  )
 }
 
 export default async function fetchDestinations(writeKeys: string[]): Promise<Destination[]> {
   const destinationsRequests: Promise<Destination[]>[] = []
+
   for (const writeKey of writeKeys) {
-    destinationsRequests.push(fetchDestinationForWriteKey(writeKey))
+    if (writeKey.length > 0) {
+      destinationsRequests.push(fetchDestinationForWriteKey(writeKey))
+    }
   }
+
+  destinationsRequests.push(fetchDestinationForBigCommerce())
 
   let destinations = flatten(await Promise.all(destinationsRequests))
   // Remove the dummy Repeater destination

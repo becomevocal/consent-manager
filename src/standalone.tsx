@@ -32,9 +32,9 @@ if (!containerRef) {
   throw new Error('ConsentManager: container is required')
 }
 
-if (!props.writeKey) {
-  throw new Error('ConsentManager: writeKey is required')
-}
+// if (!props.writeKey) {
+// throw new Error('ConsentManager: writeKey is required')
+// }
 
 if (!props.bannerContent) {
   throw new Error('ConsentManager: bannerContent is required')

@@ -3,7 +3,7 @@ import React from 'react'
 import Banner from './banner'
 import PreferenceDialog from './preference-dialog'
 import CancelDialog from './cancel-dialog'
-import { ADVERTISING_CATEGORIES, FUNCTIONAL_CATEGORIES } from './categories'
+import { ADVERTISING_CATEGORIES, FUNCTIONAL_CATEGORIES, ESSENTIAL_CATEGORIES } from './categories'
 import { Destination, CategoryPreferences } from '../types'
 
 const emitter = new EventEmitter()
@@ -41,19 +41,27 @@ function normalizeDestinations(destinations: Destination[]) {
   const marketingDestinations: Destination[] = []
   const advertisingDestinations: Destination[] = []
   const functionalDestinations: Destination[] = []
+  const essentialDestinations: Destination[] = []
 
   for (const destination of destinations) {
     if (ADVERTISING_CATEGORIES.find(c => c === destination.category)) {
       advertisingDestinations.push(destination)
     } else if (FUNCTIONAL_CATEGORIES.find(c => c === destination.category)) {
       functionalDestinations.push(destination)
+    } else if (ESSENTIAL_CATEGORIES.find(c => c === destination.category)) {
+      essentialDestinations.push(destination)
     } else {
       // Fallback to marketing
       marketingDestinations.push(destination)
     }
   }
 
-  return { marketingDestinations, advertisingDestinations, functionalDestinations }
+  return {
+    marketingDestinations,
+    advertisingDestinations,
+    functionalDestinations,
+    essentialDestinations
+  }
 }
 
 const Container: React.FC<ContainerProps> = props => {
@@ -68,7 +76,8 @@ const Container: React.FC<ContainerProps> = props => {
   const {
     marketingDestinations,
     advertisingDestinations,
-    functionalDestinations
+    functionalDestinations,
+    essentialDestinations
   } = normalizeDestinations(props.destinations)
 
   const handleBodyClick = e => {
@@ -180,6 +189,7 @@ const Container: React.FC<ContainerProps> = props => {
           marketingDestinations={marketingDestinations}
           advertisingDestinations={advertisingDestinations}
           functionalDestinations={functionalDestinations}
+          essentialDestinations={essentialDestinations}
           marketingAndAnalytics={props.preferences.marketingAndAnalytics}
           advertising={props.preferences.advertising}
           functional={props.preferences.functional}

@@ -25,3 +25,5 @@ export const FUNCTIONAL_CATEGORIES = [
   'SMS & Push Notifications',
   'Security & Fraud'
 ]
+
+export const ESSENTIAL_CATEGORIES = ['Web Design Framework', 'JS Library', 'Search', 'Reviews']
